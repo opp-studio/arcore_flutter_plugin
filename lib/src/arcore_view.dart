@@ -59,9 +59,6 @@ class _ArCoreViewState extends State<ArCoreView> with WidgetsBindingObserver {
   }
 
   void _onPlatformViewCreated(int id) {
-    if (widget.onArCoreViewCreated == null) {
-      return;
-    }
     widget.onArCoreViewCreated(ArCoreController(
         id: id,
         enableTapRecognizer: widget.enableTapRecognizer,

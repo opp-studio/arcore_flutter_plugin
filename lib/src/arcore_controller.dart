@@ -134,7 +134,6 @@ class ArCoreController {
   }
 
   Future<void> addArCoreNode(ArCoreNode node, {String? parentNodeName}) {
-    assert(node != null);
     final params = _addParentNodeNameToParams(node.toMap(), parentNodeName);
     if (debug) {
       print(params.toString());
@@ -153,8 +152,6 @@ class ArCoreController {
 
   addArCoreNodeToAugmentedImage(ArCoreNode node, int index,
       {String? parentNodeName}) {
-    assert(node != null);
-
     final params = _addParentNodeNameToParams(node.toMap(), parentNodeName);
     return _channel!.invokeMethod(
         'attachObjectToAugmentedImage', {'index': index, 'node': params});
@@ -162,7 +159,6 @@ class ArCoreController {
 
   Future<void> addArCoreNodeWithAnchor(ArCoreNode node,
       {String? parentNodeName}) {
-    assert(node != null);
     final params = _addParentNodeNameToParams(node.toMap(), parentNodeName);
     if (debug) {
       print(params.toString());
@@ -175,7 +171,6 @@ class ArCoreController {
   }
 
   Future<void> removeNode({required String nodeName}) {
-    assert(nodeName != null);
     return _channel!.invokeMethod('removeARCoreNode', {'nodeName': nodeName});
   }
 
@@ -188,7 +183,7 @@ class ArCoreController {
 
   void _addListeners(ArCoreNode node) {
     node.position.addListener(() => _handlePositionChanged(node));
-    node?.shape?.materials?.addListener(() => _updateMaterials(node));
+    node.shape?.materials.addListener(() => _updateMaterials(node));
 
     if (node is ArCoreRotatingNode) {
       node.degreesPerSecond.addListener(() => _handleRotationChanged(node));
@@ -218,7 +213,6 @@ class ArCoreController {
   }
 
   Future<void> loadSingleAugmentedImage({required Uint8List bytes}) {
-    assert(bytes != null);
     return _channel!.invokeMethod('load_single_image_on_db', {
       'bytes': bytes,
     });
@@ -226,14 +220,12 @@ class ArCoreController {
 
   Future<void> loadMultipleAugmentedImage(
       {required Map<String, Uint8List> bytesMap}) {
-    assert(bytesMap != null);
     return _channel!.invokeMethod('load_multiple_images_on_db', {
       'bytesMap': bytesMap,
     });
   }
 
   Future<void> loadAugmentedImagesDatabase({required Uint8List bytes}) {
-    assert(bytes != null);
     return _channel!.invokeMethod('load_augmented_images_database', {
       'bytes': bytes,
     });
