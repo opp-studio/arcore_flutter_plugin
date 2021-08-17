@@ -1,12 +1,12 @@
 import 'package:arcore_flutter_plugin/src/arcore_pose.dart';
 
 class ArCoreAugmentedImage {
-  String name;
-  int index;
+  String? name;
+  int? index;
   ArCorePose centerPose;
   TrackingMethod trackingMethod;
-  double extentX;
-  double extentZ;
+  double? extentX;
+  double? extentZ;
 
   ArCoreAugmentedImage.fromMap(Map<dynamic, dynamic> map)
       : this.name = map['name'],
