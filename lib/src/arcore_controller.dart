@@ -32,7 +32,7 @@ class ArCoreController {
   }
 
   ArCoreController(
-      {int? id,
+      {this.id,
       this.enableTapRecognizer,
       this.enablePlaneRenderer,
       this.enableUpdateListener,
@@ -44,6 +44,7 @@ class ArCoreController {
     init();
   }
 
+  final int? id;
   final bool? enableUpdateListener;
   final bool? enableTapRecognizer;
   final bool? enablePlaneRenderer;
@@ -183,11 +184,23 @@ class ArCoreController {
 
   void _addListeners(ArCoreNode node) {
     node.position.addListener(() => _handlePositionChanged(node));
+    node.rotation.addListener(() => _handleNodeRotationChanged(node));
+    node.scale.addListener(() => _handleScaleChanged(node));
     node.shape?.materials.addListener(() => _updateMaterials(node));
 
     if (node is ArCoreRotatingNode) {
       node.degreesPerSecond.addListener(() => _handleRotationChanged(node));
     }
+  }
+
+  void _handleNodeRotationChanged(ArCoreNode node) {
+    _channel!.invokeMethod<void>('nodeRotationChanged',
+        _getHandlerParams(node, convertVector4ToMap(node.rotation.value)!));
+  }
+
+  void _handleScaleChanged(ArCoreNode node) {
+    _channel!.invokeMethod<void>('scaleChanged',
+        _getHandlerParams(node, convertVector3ToMap(node.scale.value)!));
   }
 
   void _handlePositionChanged(ArCoreNode node) {

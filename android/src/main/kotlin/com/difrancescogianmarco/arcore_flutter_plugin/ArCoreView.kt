@@ -17,10 +17,14 @@ import com.difrancescogianmarco.arcore_flutter_plugin.flutter_models.FlutterArCo
 import com.difrancescogianmarco.arcore_flutter_plugin.models.RotatingNode
 import com.difrancescogianmarco.arcore_flutter_plugin.utils.ArCoreUtils
 import com.google.ar.core.*
+import com.difrancescogianmarco.arcore_flutter_plugin.utils.DecodableUtils.Companion.parseVector3
+import com.difrancescogianmarco.arcore_flutter_plugin.utils.DecodableUtils.Companion.parseQuaternion
 import com.google.ar.core.exceptions.CameraNotAvailableException
 import com.google.ar.core.exceptions.UnavailableException
 import com.google.ar.core.exceptions.UnavailableUserDeclinedInstallationException
 import com.google.ar.sceneform.*
+import com.google.ar.sceneform.math.Quaternion
+import com.google.ar.sceneform.math.Vector3
 import com.google.ar.sceneform.rendering.ModelRenderable
 import com.google.ar.sceneform.rendering.Texture
 import com.google.ar.sceneform.ux.AugmentedFaceNode
@@ -181,8 +185,19 @@ class ArCoreView(val activity: Activity, context: Context, messenger: BinaryMess
             }
             "positionChanged" -> {
                 debugLog(" positionChanged")
+                updatePosition(call, result)
 
             }
+            "scaleChanged" -> {
+                debugLog(" scaleChanged")
+                updateScale(call, result)
+            }
+
+            "nodeRotationChanged" -> {
+                debugLog(" nodeRotationChanged")
+                updateNodeRotation(call, result)
+            }
+
             "rotationChanged" -> {
                 debugLog(" rotationChanged")
                 updateRotation(call, result)
@@ -220,6 +235,27 @@ class ArCoreView(val activity: Activity, context: Context, messenger: BinaryMess
             else -> {
             }
         }
+    }
+
+    fun updateScale(call: MethodCall, result: MethodChannel.Result) {
+        val name = call.argument<String>("name")
+        val node = arSceneView?.scene?.findByName(name)
+        node?.localScale = parseVector3(call.arguments as HashMap<String, Any>) ?: Vector3(1.0F, 1.0F, 1.0F)
+        result.success(null)
+    }
+
+    fun updatePosition(call: MethodCall, result: MethodChannel.Result) {
+        val name = call.argument<String>("name")
+        val node = arSceneView?.scene?.findByName(name)
+        node?.localPosition = parseVector3(call.arguments as HashMap<String, Any>)?: Vector3()
+        result.success(null)
+    }
+
+    fun updateNodeRotation(call: MethodCall, result: MethodChannel.Result) {
+        val name = call.argument<String>("name")
+        val node = arSceneView?.scene?.findByName(name)
+        node?.localRotation = parseQuaternion(call.arguments as? HashMap<String, Double>) ?: Quaternion()
+        result.success(null)
     }
 
 /*    fun maybeEnableArButton() {
@@ -555,12 +591,5 @@ class ArCoreView(val activity: Activity, context: Context, messenger: BinaryMess
             }
         }
 
-    }*/
-
-    /*    fun updatePosition(call: MethodCall, result: MethodChannel.Result) {
-        val name = call.argument<String>("name")
-        val node = arSceneView?.scene?.findByName(name)
-        node?.localPosition = parseVector3(call.arguments as HashMap<String, Any>)
-        result.success(null)
     }*/
 }
